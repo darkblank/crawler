@@ -1,6 +1,7 @@
 reated by https://www.gitignore.io/api/linux,python,pycharm
 
 ### Custom ###
+/webtoon
 .idea
 /db
 *.txt
