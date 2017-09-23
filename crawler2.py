@@ -26,18 +26,25 @@ from bs4 import BeautifulSoup
 
 import utils
 from urllib.parse import urlparse, parse_qs
-from episode import Episode
 
 
 class NaverWebtoonCrawler:
     def __init__(self, webtoon_title=None):
         # find_webtoon()메서드에 초기화 메서드에 주어진 webtoon_title매개변수를 사용
-        # 검색결과를 webtoon_search_results변수에 할당 (리스트)
-        webtoon_search_results = self.find_webtoon(webtoon_title)
-        # 검색결과가 없을 경우
-        while not webtoon_search_results:
-            search_title = input('검색할 웹툰명을 입력해주세요: ')
-            webtoon_search_results = self.find_webtoon(search_title)
+        # webtoon_title이 None일 경우
+        if webtoon_title is None:
+            webtoon_search_results = False
+            while not webtoon_search_results:
+                search_title = input('검색할 웹툰명을 입력해주세요: ')
+                webtoon_search_results = self.find_webtoon(search_title)
+        # webtoon_title value가 있을경우
+        elif webtoon_title is not None:
+            # 검색결과를 webtoon_search_results변수에 할당 (리스트)
+            webtoon_search_results = self.find_webtoon(webtoon_title)
+            # 검색결과가 없을 경우
+            while not webtoon_search_results:
+                search_title = input('검색할 웹툰명을 입력해주세요: ')
+                webtoon_search_results = self.find_webtoon(search_title)
 
         # 검색결과가 1개일 경우, self.webtoon을 바로 지정
         if len(webtoon_search_results) == 1:
@@ -160,7 +167,7 @@ class NaverWebtoonCrawler:
                 webtoon = utils.Webtoon(title_id=title_id, img_url=img_url, title=title)
                 webtoon_list.add(webtoon)
 
-        webtoon_list = sorted(list(webtoon_list), key=lambda webtoon: webtoon.title) #확인하고 이곳
+        webtoon_list = sorted(list(webtoon_list), key=lambda webtoon: webtoon.title)  # 이곳 확인하기
         return webtoon_list
 
     def update_episode_list(self, force_update=False):
@@ -209,17 +216,12 @@ class NaverWebtoonCrawler:
         return len(new_list)
 
     def get_last_page_episode_list(self):
+        """
+        :return: 마지막 페이지의 리스트의 개수
+        """
         el = utils.get_webtoon_episode_list(self.webtoon, 99999)
         self.episode_list = el
         return len(self.episode_list)
-
-    def get_episode_detail(self, episode):
-        """
-        주어진 Episode의 상세페이지를 크롤링
-            1. 상세페이지를 파싱해서 img태그들의 src속성들을 가져옴
-        :param episode:
-        :return:
-        """
 
     def save(self, path=None):
         """
@@ -320,7 +322,6 @@ class NaverWebtoonCrawler:
             list_html_tail = open('html/list_html_tail.html', 'rt').read()
             f.write(list_html_tail)
         return filename
-
 
 # if __name__ == '__main__':
 #     crawler = NaverWebtoonCrawler('선천적')

@@ -19,9 +19,9 @@ class Episode:
         self.rating = rating
         self.created_date = created_date
 
-        self.thumbnail_dir = f'webtoon/{self.webtoon.title_id}_thumbnail'
-        self.image_dir = 'webtoon/%s_images/%s' % (self.webtoon.title_id, self.no)
-        self.episode_dir = f'webtoon/{self.webtoon.title_id}'
+        self.thumbnail_dir = f'webtoon/{self.webtoon.title}/{self.webtoon.title_id}_thumbnail'
+        self.image_dir = 'webtoon/%s/%s_images/%s' % (self.webtoon.title, self.webtoon.title_id, self.no)
+        self.episode_dir = f'webtoon/{self.webtoon.title}/{self.webtoon.title_id}_main'
         # ex) webtoon/669233_images/1/01.jpg
         # ex) webtoon/669233_images/1/02.jpg
         # ex) webtoon/669233_images/1/03.jpg
@@ -131,10 +131,10 @@ class Episode:
         )
         img_list_html = ''
         for file in os.listdir(self.image_dir):
-            cur_img_tag = '<img src="%s/%s">' % (self.image_dir, file)
+            cur_img_tag = '<img src="../../../%s/%s">' % (self.image_dir, file)
             img_list_html += cur_img_tag
 
-        detail_html.replace('*contents*', img_list_html)
+        detail_html = detail_html.replace('*contents*', img_list_html)
         with open(f'{self.episode_dir}/{self.no}.html', 'wt') as f:
             f.write(detail_html)
 
