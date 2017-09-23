@@ -301,9 +301,9 @@ class NaverWebtoonCrawler:
         :return: 파일의 경로
         """
         # webtoon/ 폴더 존재하는지 확인 후 없으면 생성
-        if not os.path.isdir('webtoon'):
-            os.mkdir('webtoon')
-        filename = f'webtoon/{self.webtoon.title_id}.html'
+        if not os.path.exists(f'webtoon/{self.webtoon.title}'):
+            os.mkdir(f'webtoon/{self.webtoon.title}')재
+        filename = f'webtoon/{self.webtoon.title}/{self.webtoon.title_id}.html'
         with open(filename, 'wt') as f:
             # HTML 앞부분 작성
             list_html_head = open('html/list_html_head.html', 'rt').read()
