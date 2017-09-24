@@ -26,6 +26,7 @@ class Episode:
         # ex) webtoon/669233_images/1/02.jpg
         # ex) webtoon/669233_images/1/03.jpg
         self.save_thumbnail()
+        self.save_contents()
 
     # @property
     # def webtoon(self):
@@ -84,7 +85,7 @@ class Episode:
         self._save_images()
         self._make_html()
 
-    def _save_images(self):
+    def _save_images(self, force_update=False):
         """
         자기자신 페이지 (각 episode페이지)의 img들을 다운로드
         webtoon
@@ -113,30 +114,34 @@ class Episode:
 
         # 리스트를 순회하며 (각 item은 img의 src가 된다)
         for index, url in enumerate(url_img_list):
-            # img에 대한 각 requests.get에는 url_contents가 Referer인 header가 필요
-            headers = {
-                'Referer': url_contents
-            }
-            # requests.get요청을 보냄
-            response = requests.get(url, headers=headers)
-            # 파일을 저장
-            with open(f'{self.image_dir}/{index + 1}.jpg', 'wb') as f:
-                f.write(response.content)
+            force = os.path.exists(f'{self.image_dir}/{index + 1}.jpg')
+            if not force or force_update:
+                # img에 대한 각 requests.get에는 url_contents가 Referer인 header가 필요
+                headers = {
+                    'Referer': url_contents
+                }
+                # requests.get요청을 보냄
+                response = requests.get(url, headers=headers)
+                # 파일을 저장
+                with open(f'{self.image_dir}/{index + 1}.jpg', 'wb') as f:
+                    f.write(response.content)
 
-    def _make_html(self):
-        os.makedirs(self.episode_dir, exist_ok=True)
-        detail_html = open('html/detail_html.html', 'rt').read()
-        detail_html = detail_html.replace(
-            '*title*', '%s - %s' % (self.webtoon.title, self.title)
-        )
-        img_list_html = ''
-        for file in os.listdir(self.image_dir):
-            cur_img_tag = '<img src="../../../%s/%s">' % (self.image_dir, file)
-            img_list_html += cur_img_tag
+    def _make_html(self, force_update=False):
+        force=os.path.exists(f'{self.episode_dir}/{self.no}.html')
+        if not force or force_update:
+            os.makedirs(self.episode_dir, exist_ok=True)
+            detail_html = open('html/detail_html.html', 'rt').read()
+            detail_html = detail_html.replace(
+                '*title*', '%s - %s' % (self.webtoon.title, self.title)
+            )
+            img_list_html = ''
+            for file in os.listdir(self.image_dir):
+                cur_img_tag = '<img src="../../../%s/%s">' % (self.image_dir, file)
+                img_list_html += cur_img_tag
 
-        detail_html = detail_html.replace('*contents*', img_list_html)
-        with open(f'{self.episode_dir}/{self.no}.html', 'wt') as f:
-            f.write(detail_html)
+            detail_html = detail_html.replace('*contents*', img_list_html)
+            with open(f'{self.episode_dir}/{self.no}.html', 'wt') as f:
+                f.write(detail_html)
 
 
 # if __name__ == '__main__':
