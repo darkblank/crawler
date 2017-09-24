@@ -313,6 +313,7 @@ class NaverWebtoonCrawler:
             for e in self.episode_list:
                 list_html_tr = open('html/list_html_tr.html', 'rt').read()
                 f.write(list_html_tr.format(
+                    url=f'./{self.webtoon.title_id}_main/{e.no}.html',
                     img_url=f'./{self.webtoon.title_id}_thumbnail/{e.no}.jpg',
                     title=e.title,
                     rating=e.rating,
