@@ -338,7 +338,10 @@ class NaverWebtoonCrawler:
 
             for dirlist in os.listdir('webtoon/'):
                 webtoon_list_body = open('html/webtoon_list_body.html', 'rt').read()
-                f.write(webtoon_list_body.format(title=dirlist))
+                detail_lists = sorted(os.listdir('webtoon/%s' % dirlist))
+                detail_html = detail_lists[0]
+                f.write(webtoon_list_body.format(title=dirlist,
+                                                 list_url=f'../webtoon/{dirlist}/{detail_html}'))
 
             webtoon_list_tail = open('html/webtoon_list_tail.html', 'rt').read()
             f.write(webtoon_list_tail)
