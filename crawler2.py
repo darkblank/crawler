@@ -323,6 +323,27 @@ class NaverWebtoonCrawler:
             f.write(list_html_tail)
         return filename
 
+    def update_webtoon_list_html(self):
+        """
+        가져온 웹툰들의
+        리스트 링크를 만듦
+        :return: 해당파일 경로 리턴
+        """
+        if not os.path.exists('html'):
+            os.mkdir('html')
+        filename = f'html/webtoon_list.html'
+        with open(filename, 'wt') as f:
+            webtoon_list_head = open('html/webtoon_list_head.html', 'rt').read()
+            f.write(webtoon_list_head)
+
+            for dirlist in os.listdir('webtoon/'):
+                webtoon_list_body = open('html/webtoon_list_body.html', 'rt').read()
+                f.write(webtoon_list_body.format(title=dirlist))
+
+            webtoon_list_tail = open('html/webtoon_list_tail.html', 'rt').read()
+            f.write(webtoon_list_tail)
+        return filename
+
 # if __name__ == '__main__':
 #     crawler = NaverWebtoonCrawler('선천적')
 #     crawler.update_episode_list()
