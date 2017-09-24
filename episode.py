@@ -61,7 +61,7 @@ class Episode:
         path = f'{self.thumbnail_dir}/{self.no}.jpg'
         return os.path.exists(path)
 
-    def save_thumbnail(self, force_update=True):
+    def save_thumbnail(self, force_update=False):
         """
         Episode자신의 img_url에 있는 이미지를 저장한다
         :param force_update:
