@@ -1,31 +1,18 @@
 """
-class NaverWebtoonCrawler생성
-    초기화메서드
-        webtoon_id
-        episode_list (빈 list)
-            를 할당
-
-    인스턴스 메서드
-        def get_episode_list(self, page)
-            해당 페이지의 episode_list를 생성, self.episode_list에 할당
-
-        def clear_episode_list(self)
-            자신의 episode_list를 빈 리스트로 만듬
-
-        def get_all_episode_list(self)
-            webtoon_id의 모든 episode를 생성
-
-        def add_new_episode_list(self)
-            새로 업데이트된 episode목록만 생성
+NaverWebtoonCrawler() 클래스 생성
+up_to_date 프로퍼티 실행
+update_episode_list() 실행 > 현재 인스턴스의 에피소드 리스트 html까지 생성해줌(make_list_html()실행)
+                          > 현재 가지고 있는 웹툰의 리스트도 자동 업데이트(update_webtoon_list_html()실행)
 
 """
 import os
 import pickle
+from urllib.parse import urlparse, parse_qs
+
 import requests
 from bs4 import BeautifulSoup
 
 import utils
-from urllib.parse import urlparse, parse_qs
 
 
 class NaverWebtoonCrawler:
@@ -65,24 +52,6 @@ class NaverWebtoonCrawler:
                     ))
                 except ValueError:
                     print('에러] 해당 웹툰의 숫자를 입력해주세요\n')
-        """
-        1. webtoon_title이 주어지면,
-            1-1. 해당 웹툰 검색결과를 가져와서
-            1-2. 검색결과가 1개면 해당 웹툰을
-                  self.webtoon에 할당
-            1-3. 검색결과가 2개 이상이면 선택가능하도록 목록을 보여주고
-                  input으로 입력받음
-            1-4. 검색결과가 없으면 다시 웹툰을 검색하도록 함
-
-        2. webtoon_title이 주어지지 않으면
-            2-1. 웹툰 검색을 할 수 있는 input을 띄워줌
-            2-2. 이후는 위의 1-2, 1-3을 따라감
-
-        3. webtoon_id를 쓰던 코드를 전부 수정 (self.webtoon을 사용)
-            self.webtoon은 Webtoon타입 namedtuple
-        """
-        # 객체 생성 시, 'db/{webtoon_id}.txt'파일이 존재하면
-        # 바로 load() 해오도록 작성
         self.episode_list = list()
         self.load(init=True)
         print('- 현재 웹툰: %s' % self.webtoon.title)
@@ -213,6 +182,8 @@ class NaverWebtoonCrawler:
 
         self.episode_list = new_list + self.episode_list
         self.save()
+        self.make_list_html()
+        self.update_webtoon_list_html()
         return len(new_list)
 
     def get_last_page_episode_list(self):

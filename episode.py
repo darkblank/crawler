@@ -2,7 +2,6 @@
 import os
 from urllib.parse import urlencode
 
-import pickle
 import requests
 from bs4 import BeautifulSoup
 
@@ -11,6 +10,7 @@ class Episode:
     """
     namedtuple 'Episode'와 같은 역할을 할 수 있도록 생성
     """
+
     def __init__(self, webtoon, no, url_thumbnail, title, rating, created_date):
         self.webtoon = webtoon
         self.no = no
@@ -101,7 +101,7 @@ class Episode:
             'titleId': self.webtoon.title_id,
             'no': self.no
         }
-        url_contents = 'http://comic.naver.com/webtoon/detail.nhn?'\
+        url_contents = 'http://comic.naver.com/webtoon/detail.nhn?' \
                        + urlencode(params)
         # 본문 페이지에 대한 HTTP요청 응답
         response = requests.get(url_contents)
@@ -127,7 +127,7 @@ class Episode:
                     f.write(response.content)
 
     def _make_html(self, force_update=False):
-        force=os.path.exists(f'{self.episode_dir}/{self.no}.html')
+        force = os.path.exists(f'{self.episode_dir}/{self.no}.html')
         if not force or force_update:
             os.makedirs(self.episode_dir, exist_ok=True)
             detail_html = open('html/detail_html.html', 'rt').read()
@@ -142,7 +142,6 @@ class Episode:
             detail_html = detail_html.replace('*contents*', img_list_html)
             with open(f'{self.episode_dir}/{self.no}.html', 'wt') as f:
                 f.write(detail_html)
-
 
 # if __name__ == '__main__':
 #     el = pickle.load(open('db/697680.txt', 'rb'))
