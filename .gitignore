@@ -4,7 +4,6 @@ reated by https://www.gitignore.io/api/linux,python,pycharm
 /webtoon
 .idea
 /db
-*.txt
 
 ### Linux ###
 *~
